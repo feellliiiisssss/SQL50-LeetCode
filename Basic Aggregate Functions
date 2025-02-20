@@ -1,0 +1,75 @@
+#1. Not Boring Movies (Easy)
+--Write a solution to report the movies with an odd-numbered ID and a description that is not "boring".
+--Return the result table ordered by rating in descending order.
+SELECT*FROM cinema WHERE description <> 'boring' AND (id%2) <> 0 ORDER BY rating DESC
+
+#2. Average Selling Price (Easy)
+--Write a solution to find the average selling price for each product. average_price should be rounded to 2 decimal places. If a product does not have any sold units, its average selling price is assumed to be 0.
+--Return the result table in any order.
+SELECT distinct a.product_id, 
+ROUND(SUM(b/a),2) as average_price FROM
+(
+SELECT p.product_id,
+SUM(u.units) a,
+ROUND(SUM(u.units*p.price),2) b
+FROM
+prices p LEFT JOIN unitssold u ON p.product_id = u.product_id
+WHERE purchase_date BETWEEN start_date AND end_date
+GROUP BY p.product_id
+) SUBQUERY
+GROUP BY a.product_id
+UNION
+SELECT product_id, 0 as average_price FROM prices WHERE product_id NOT IN (SELECT product_id FROM unitssold)
+
+#3. Project Employees I (Easy)
+--Write an SQL query that reports the average experience years of all the employees for each project, rounded to 2 digits.
+--Return the result table in any order.
+SELECT p.project_id, 
+ROUND(SUM(e.experience_years)/COUNT(p.project_id),2) average_years
+FROM employee e JOIN project p ON e.employee_id = p.employee_id
+GROUP BY p.project_id 
+ORDER BY p.project_id
+
+#4. Percentage of Users Attended a Contest (Easy)
+--Write a solution to find the percentage of the users registered in each contest rounded to two decimals.
+--Return the result table ordered by percentage in descending order. In case of a tie, order it by contest_id in ascending order.
+SELECT r.contest_id,
+ROUND(COUNT(DISTINCT r.user_id) / (SELECT COUNT(DISTINCT user_id) FROM users)*100,2) percentage 
+FROM users u JOIN register r ON u.user_id = r.user_id
+GROUP BY r.contest_id
+ORDER BY percentage desc,contest_id
+
+#5. Queries Quality and Percentage (Easy)
+--We define query quality as: The average of the ratio between query rating and its position.
+--We also define poor query percentage as: The percentage of all queries with rating less than 3.
+--Write a solution to find each query_name, the quality and poor_query_percentage.
+--Both quality and poor_query_percentage should be rounded to 2 decimal places. Return the result table in any order.
+SELECT DISTINCT query_name, ROUND(AVG(rating/position),2) quality,
+ROUND(SUM(rating<3)/COUNT(*)*100,2) poor_query_percentage
+FROM queries
+GROUP BY query_name
+
+#6. Monthly Transactions I (Medium)
+--Write an SQL query to find for each month and country, the number of transactions and their total amount, the number of approved transactions and their total amount.
+--Return the result table in any order.
+SELECT date_format(trans_date, '%Y-%m') month, country, COUNT(state) trans_count, COUNT(state='approved' OR NULL) approved_count,
+SUM(amount) trans_total_amount, 
+SUM(CASE WHEN state='approved' THEN amount else 0 end) approved_total_amount
+FROM transactions
+GROUP BY month, country
+
+#7. Immediate Food Delivery II (Medium)
+--If the customer's preferred delivery date is the same as the order date, then the order is called immediate; otherwise, it is called scheduled.
+--The first order of a customer is the order with the earliest order date that the customer made. It is guaranteed that a customer has precisely one first order.
+--Write a solution to find the percentage of immediate orders in the first orders of all customers, rounded to 2 decimal places.
+SELECT ROUND((SUM(CASE WHEN cat = 'immediate' THEN 1 ELSE 0 END)/COUNT(cat))*100,2) immediate_percentage
+FROM(
+SELECT delivery_id, customer_id, RANK() OVER(PARTITION BY customer_id ORDER BY order_date) SUBQUERY,
+CASE WHEN order_date = customer_pref_delivery_date THEN 'immediate' ELSE 'scheduled' END AS cat 
+FROM delivery
+ORDER BY order_date) SUBQUERYY
+WHERE SUBQUERY=1
+
+#8. Game Play Analysis IV (Medium)
+--Write a solution to report the fraction of players that logged in again on the day after the day they first logged in, rounded to 2 decimal places. In other words, you need to count the number of players that logged in for at least two consecutive days starting from their first login date, then divide that number by the total number of players.
+--NOT COMPLEATED YET :)
