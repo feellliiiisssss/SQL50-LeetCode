@@ -1,4 +1,4 @@
-# SQL50-LeetCode
+# SQL50 - LeetCode
 
 ![image](https://github.com/user-attachments/assets/7c5bfde5-b56a-48a2-b51e-b81f91c04876)
 
