@@ -1,11 +1,11 @@
 #1. Number of Unique Subjects Taught by Each Teacher (Easy)
---Write a solution to calculate the number of unique subjects each teacher teaches in the university.
---Return the result table in any order.
+-- Write a solution to calculate the number of unique subjects each teacher teaches in the university.
+-- Return the result table in any order.
 SELECT DISTINCT teacher_id, COUNT(DISTINCT subject_id) cnt FROM teacher GROUP BY teacher_id
 
 #2. User Activity for the Past 30 Days I (Easy)
---Write a solution to find the daily active user count for a period of 30 days ending 2019-07-27 inclusively. A user was active on someday if they made at least one activity on that day.
---Return the result table in any order.
+-- Write a solution to find the daily active user count for a period of 30 days ending 2019-07-27 inclusively. A user was active on someday if they made at least one activity on that day.
+-- Return the result table in any order.
 SELECT DISTINCT activity_date day, COUNT(DISTINCT user_id) active_users FROM activity
 WHERE activity_date between 
 (SELECT MAX(activity_date) FROM activity) - INTERVAL 29 DAY and (SELECT MAX(activity_date) FROM activity)
@@ -13,8 +13,8 @@ GROUP BY activity_date
 HAVING COUNT(activity_type) > 2
 
 #3. Product Sales Analysis III (Medium)
---Write a solution to select the product id, year, quantity, and price for the first year of every product sold.
---Return the resulting table in any order.
+-- Write a solution to select the product id, year, quantity, and price for the first year of every product sold.
+-- Return the resulting table in any order.
 SELECT product_id, first_year, quantity, price FROM(
 SELECT s.product_id, MIN(s.year) first_year, s.quantity, s.price FROM sales s
 JOIN (select s.product_id, MIN(s.year) first_year FROM sales s 
@@ -24,22 +24,22 @@ GROUP BY s.product_id, s.quantity, s.price
 ) SUBQUERY2
 
 #4. Classes More Than 5 Students (Easy)
---Write a solution to find all the classes that have at least five students.
---Return the result table in any order.
+-- Write a solution to find all the classes that have at least five students.
+-- Return the result table in any order.
 SELECT class FROM courses
 GROUP BY class
 HAVING COUNT(DISTINCT student)>=5
 
 #5. Find Followers Count (Easy)
---Write a solution that will, for each user, return the number of followers.
---Return the result table ordered by user_id in ascending order.
+-- Write a solution that will, for each user, return the number of followers.
+-- Return the result table ordered by user_id in ascending order.
 SELECT user_id, COUNT(DISTINCT follower_id) followers_count
 FROM followers
 GROUP BY user_id
 
 #6. Biggest Single Number (Easy)
---A single number is a number that appeared only once in the MyNumbers table.
---Find the largest single number. If there is no single number, report null.
+-- A single number is a number that appeared only once in the MyNumbers table.
+-- Find the largest single number. If there is no single number, report null.
 SELECT MAX(num) num FROM (
 SELECT MAX(num) num FROM mynumbers
 GROUP BY num
@@ -47,8 +47,8 @@ HAVING COUN(*) = 1
 ) SUBQUERY
 
 #7. Customers Who Bought All Products (Medium)
---Write a solution to report the customer ids from the Customer table that bought all the products in the Product table.
---Return the result table in any order.
+-- Write a solution to report the customer ids from the Customer table that bought all the products in the Product table.
+-- Return the result table in any order.
 SELECT customer_id FROM customer
 GROUP BY customer_id
 HAVING COUNT(DISTINCT product_key) = (SELECT count(product_key) FROM product)
